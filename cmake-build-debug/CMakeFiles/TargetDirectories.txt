@@ -1,0 +1,3 @@
+C:/Users/Hp/CLionProjects/JuegoUNO/cmake-build-debug/CMakeFiles/JuegoUNO.dir
+C:/Users/Hp/CLionProjects/JuegoUNO/cmake-build-debug/CMakeFiles/edit_cache.dir
+C:/Users/Hp/CLionProjects/JuegoUNO/cmake-build-debug/CMakeFiles/rebuild_cache.dir

@@ -8,35 +8,20 @@
 class Stack
 {
     private:
-    struct Nodo
-    {
-        Card card;
-        Nodo* next;
-    };
-    Nodo* head;
-    int counter;
+        struct Node
+        {
+            Card card;
+            Node* next;
+        };
+        Node* head;
+        int size;
     public:
-    Stack() : head(nullptr), counter(0){};
-    void push(Card card)
-    {
-        Nodo* newNode = new Nodo{c,head};
-        head = newNode;
-        counter++;
-    };
-
-    Card pop()
-    {
-        if (isEmpty()) return Card{};
-        Nodo* aux = head;
-        Card d = aux->card;
-        head = head->next;
-        delete aux;
-        counter--;
-        return d;
-    }
-
-    bool isEmpty() {return head == nullptr;}
-    int getSize() {return counter;}
-    
+        Stack();
+        ~Stack();
+        void push(Card card);
+        Card pop();
+        Card peek();
+        bool isEmpty();
+        int getSize();
 };
 #endif //JUEGOUNO_STACK_H

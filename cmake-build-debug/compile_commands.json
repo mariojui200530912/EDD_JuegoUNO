@@ -1,0 +1,50 @@
+[
+{
+  "directory": "C:/Users/Hp/CLionProjects/JuegoUNO/cmake-build-debug",
+  "command": "C:\\PROGRA~1\\JETBRA~1\\CLION2~1.2\\bin\\mingw\\bin\\G__~1.EXE -g -fdiagnostics-color=always -o CMakeFiles\\JuegoUNO.dir\\main.cpp.obj -c C:\\Users\\Hp\\CLionProjects\\JuegoUNO\\main.cpp",
+  "file": "C:/Users/Hp/CLionProjects/JuegoUNO/main.cpp",
+  "output": "C:/Users/Hp/CLionProjects/JuegoUNO/cmake-build-debug/CMakeFiles/JuegoUNO.dir/main.cpp.obj"
+},
+{
+  "directory": "C:/Users/Hp/CLionProjects/JuegoUNO/cmake-build-debug",
+  "command": "C:\\PROGRA~1\\JETBRA~1\\CLION2~1.2\\bin\\mingw\\bin\\G__~1.EXE -g -fdiagnostics-color=always -o CMakeFiles\\JuegoUNO.dir\\src\\entity\\Player.cpp.obj -c C:\\Users\\Hp\\CLionProjects\\JuegoUNO\\src\\entity\\Player.cpp",
+  "file": "C:/Users/Hp/CLionProjects/JuegoUNO/src/entity/Player.cpp",
+  "output": "C:/Users/Hp/CLionProjects/JuegoUNO/cmake-build-debug/CMakeFiles/JuegoUNO.dir/src/entity/Player.cpp.obj"
+},
+{
+  "directory": "C:/Users/Hp/CLionProjects/JuegoUNO/cmake-build-debug",
+  "command": "C:\\PROGRA~1\\JETBRA~1\\CLION2~1.2\\bin\\mingw\\bin\\G__~1.EXE -g -fdiagnostics-color=always -o CMakeFiles\\JuegoUNO.dir\\src\\structure\\Stack.cpp.obj -c C:\\Users\\Hp\\CLionProjects\\JuegoUNO\\src\\structure\\Stack.cpp",
+  "file": "C:/Users/Hp/CLionProjects/JuegoUNO/src/structure/Stack.cpp",
+  "output": "C:/Users/Hp/CLionProjects/JuegoUNO/cmake-build-debug/CMakeFiles/JuegoUNO.dir/src/structure/Stack.cpp.obj"
+},
+{
+  "directory": "C:/Users/Hp/CLionProjects/JuegoUNO/cmake-build-debug",
+  "command": "C:\\PROGRA~1\\JETBRA~1\\CLION2~1.2\\bin\\mingw\\bin\\G__~1.EXE -g -fdiagnostics-color=always -o CMakeFiles\\JuegoUNO.dir\\src\\structure\\DLinkedList.cpp.obj -c C:\\Users\\Hp\\CLionProjects\\JuegoUNO\\src\\structure\\DLinkedList.cpp",
+  "file": "C:/Users/Hp/CLionProjects/JuegoUNO/src/structure/DLinkedList.cpp",
+  "output": "C:/Users/Hp/CLionProjects/JuegoUNO/cmake-build-debug/CMakeFiles/JuegoUNO.dir/src/structure/DLinkedList.cpp.obj"
+},
+{
+  "directory": "C:/Users/Hp/CLionProjects/JuegoUNO/cmake-build-debug",
+  "command": "C:\\PROGRA~1\\JETBRA~1\\CLION2~1.2\\bin\\mingw\\bin\\G__~1.EXE -g -fdiagnostics-color=always -o CMakeFiles\\JuegoUNO.dir\\src\\structure\\DCircularList.cpp.obj -c C:\\Users\\Hp\\CLionProjects\\JuegoUNO\\src\\structure\\DCircularList.cpp",
+  "file": "C:/Users/Hp/CLionProjects/JuegoUNO/src/structure/DCircularList.cpp",
+  "output": "C:/Users/Hp/CLionProjects/JuegoUNO/cmake-build-debug/CMakeFiles/JuegoUNO.dir/src/structure/DCircularList.cpp.obj"
+},
+{
+  "directory": "C:/Users/Hp/CLionProjects/JuegoUNO/cmake-build-debug",
+  "command": "C:\\PROGRA~1\\JETBRA~1\\CLION2~1.2\\bin\\mingw\\bin\\G__~1.EXE -g -fdiagnostics-color=always -o CMakeFiles\\JuegoUNO.dir\\src\\logic\\GeneratorDeck.cpp.obj -c C:\\Users\\Hp\\CLionProjects\\JuegoUNO\\src\\logic\\GeneratorDeck.cpp",
+  "file": "C:/Users/Hp/CLionProjects/JuegoUNO/src/logic/GeneratorDeck.cpp",
+  "output": "C:/Users/Hp/CLionProjects/JuegoUNO/cmake-build-debug/CMakeFiles/JuegoUNO.dir/src/logic/GeneratorDeck.cpp.obj"
+},
+{
+  "directory": "C:/Users/Hp/CLionProjects/JuegoUNO/cmake-build-debug",
+  "command": "C:\\PROGRA~1\\JETBRA~1\\CLION2~1.2\\bin\\mingw\\bin\\G__~1.EXE -g -fdiagnostics-color=always -o CMakeFiles\\JuegoUNO.dir\\src\\logic\\Rules.cpp.obj -c C:\\Users\\Hp\\CLionProjects\\JuegoUNO\\src\\logic\\Rules.cpp",
+  "file": "C:/Users/Hp/CLionProjects/JuegoUNO/src/logic/Rules.cpp",
+  "output": "C:/Users/Hp/CLionProjects/JuegoUNO/cmake-build-debug/CMakeFiles/JuegoUNO.dir/src/logic/Rules.cpp.obj"
+},
+{
+  "directory": "C:/Users/Hp/CLionProjects/JuegoUNO/cmake-build-debug",
+  "command": "C:\\PROGRA~1\\JETBRA~1\\CLION2~1.2\\bin\\mingw\\bin\\G__~1.EXE -g -fdiagnostics-color=always -o CMakeFiles\\JuegoUNO.dir\\src\\logic\\Game.cpp.obj -c C:\\Users\\Hp\\CLionProjects\\JuegoUNO\\src\\logic\\Game.cpp",
+  "file": "C:/Users/Hp/CLionProjects/JuegoUNO/src/logic/Game.cpp",
+  "output": "C:/Users/Hp/CLionProjects/JuegoUNO/cmake-build-debug/CMakeFiles/JuegoUNO.dir/src/logic/Game.cpp.obj"
+}
+]
