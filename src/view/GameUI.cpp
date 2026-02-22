@@ -79,23 +79,94 @@ void GameUI::drawCardASCII(Card card, Color activeColor, bool isDarkStep) {
     std::cout << " '-----------'\n" << ANSI_RESET;
 }
 
-void GameUI::printTable(Card topCard, Color activeColor, bool isDarkStep, Player* currentPlayer, int cardsToDraw, bool allowStacking) {
-    clearScreen(); // Limpiamos la pantalla de lo que hizo el jugador anterior
+void GameUI::printTable(Card topCard, Color activeColor, bool isDarkStep, Player* currentPlayer, int cardsToDraw, bool allowStacking, int deckSize) {
+    clearScreen();
 
     std::string title = "TURNO DE: " + currentPlayer->getName();
     printHeader(title);
 
-    std::cout << "  MODO: " << (isDarkStep ? ANSI_MAGENTA "LADO OSCURO (FLIP)" : ANSI_YELLOW "LADO NORMAL") << ANSI_RESET << "\n\n";
+    // Agregamos la información del mazo en la misma línea del modo de juego
+    std::cout << "  MODO: " << (isDarkStep ? ANSI_MAGENTA "LADO OSCURO (FLIP)" : ANSI_YELLOW "LADO NORMAL") << ANSI_RESET;
+    std::cout << "   |   " << ANSI_CYAN << "MAZO: [" << deckSize << " cartas]" << ANSI_RESET << "\n\n";
 
     std::cout << "  MESA ACTUAL:\n";
     drawCardASCII(topCard, activeColor, isDarkStep);
 
     if (cardsToDraw > 0) {
         std::cout << ANSI_RED << ANSI_BOLD << "\n  ¡ALERTA! Castigo de +" << cardsToDraw;
-        if (allowStacking) std::cout << ". Juega para acumular o '0' para robar.";
+        if (allowStacking) std::cout << ". Juega carta valida para acumular o '0' para robar.";
         std::cout << ANSI_RESET << "\n";
     }
 
     std::cout << "\n  TUS CARTAS:\n";
     currentPlayer->getHand().showHand(isDarkStep);
+}
+
+
+Color GameUI::askForColor(bool isDarkStep) {
+    int colorOpt;
+    std::cout << "\n" << ANSI_BOLD << ">> SELECCIONA EL SIGUIENTE COLOR <<" << ANSI_RESET << std::endl;
+
+    if (!isDarkStep) {
+        std::cout << "[1:Rojo, 2:Verde, 3:Azul, 4:Amarillo]: ";
+        while(!(std::cin >> colorOpt) || colorOpt < 1 || colorOpt > 4) {
+            std::cout << ANSI_RED << "Opcion invalida. Intenta de nuevo: " << ANSI_RESET;
+            std::cin.clear(); std::cin.ignore(1000,'\n');
+        }
+        if (colorOpt == 1) return Color::RED;
+        if (colorOpt == 2) return Color::GREEN;
+        if (colorOpt == 3) return Color::BLUE;
+        return Color::YELLOW;
+    } else {
+        std::cout << "[1:Rosa, 2:Turquesa, 3:Naranja, 4:Morado]: ";
+        while(!(std::cin >> colorOpt) || colorOpt < 1 || colorOpt > 4) {
+            std::cout << ANSI_RED << "Opcion invalida. Intenta de nuevo: " << ANSI_RESET;
+            std::cin.clear(); std::cin.ignore(1000,'\n');
+        }
+        if (colorOpt == 1) return Color::PINK;
+        if (colorOpt == 2) return Color::TURQUOISE;
+        if (colorOpt == 3) return Color::ORANGE;
+        return Color::PURPLE;
+    }
+}
+
+bool GameUI::askForUno() {
+    std::string grito;
+    std::cout << ANSI_RED << "¡Te queda 1! Escribe 'UNO': " << ANSI_RESET;
+    std::cin >> grito;
+    return (grito == "UNO" || grito == "uno" || grito == "Uno");
+}
+
+bool GameUI::askToChallenge(std::string victimName) {
+    char response;
+    std::cout << ANSI_YELLOW << victimName << ", ¿desafiar este +4? (S/N): " << ANSI_RESET;
+    std::cin >> response;
+    return (response == 'S' || response == 's');
+}
+
+void GameUI::showWelcomeScreen() {
+    clearScreen();
+    std::cout << ANSI_CYAN;
+    std::cout << "==========================================================\n";
+    std::cout << "                 BIENVENIDO A UNO FLIP!                   \n";
+    std::cout << "                 Edicion Especial C++                     \n";
+    std::cout << "==========================================================\n";
+    std::cout << ANSI_RESET;
+    std::cout << ANSI_YELLOW;
+    std::cout << "                Pratica Curso de Estructuras              \n";
+    std::cout << ANSI_RESET;
+    std::cout << "==========================================================\n";
+    std::cout << " Reglas implementadas:\n";
+    std::cout << " - Lado Claro / Lado Oscuro (Flip)\n";
+    std::cout << " - Cartas Especiales: Sniper y Ruleta\n";
+    std::cout << " - Desafio de +4 y Stacking\n";
+    std::cout << "==========================================================\n";
+    pauseGame("Presiona ENTER para iniciar la configuracion...");
+}
+
+bool GameUI::askToPlayAgain() {
+    char response;
+    std::cout << ANSI_YELLOW << ANSI_BOLD << "\n¿Desean jugar otra partida? (S/N): " << ANSI_RESET;
+    std::cin >> response;
+    return (response == 'S' || response == 's');
 }

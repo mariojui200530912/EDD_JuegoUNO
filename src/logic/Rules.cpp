@@ -10,11 +10,13 @@ bool Rules::validateMove(Card play, Card top, bool isDarkStep, Color activeColor
 
         if (top.lightColor == Color::BLACK) return (play.lightColor == activeColor);
 
-        if (play.lightType != Type::NUMBER && top.lightType != Type::NUMBER) {
-            if (play.lightType == top.lightType) return true;
-        }
+        if (play.lightColor == top.lightColor) return true;
 
-        return (play.lightColor == top.lightColor || play.lightValue == top.lightValue);
+        if (play.lightType == top.lightType && play.lightType != Type::NUMBER) return true;
+
+        if (play.lightType == Type::NUMBER && top.lightType == Type::NUMBER && play.lightValue == top.lightValue) return true;
+
+        return false;
     } else {
         if (play.darkType == Type::WILD_CARD || play.darkType == Type::DRAW_UNTIL_COLOR ||
             play.darkType == Type::DRAW_SIX || play.darkType == Type::ROULETTE ||
@@ -22,11 +24,13 @@ bool Rules::validateMove(Card play, Card top, bool isDarkStep, Color activeColor
 
         if (top.darkColor == Color::BLACK) return (play.darkColor == activeColor);
 
-        if (play.darkType != Type::NUMBER && top.darkType != Type::NUMBER) {
-            if (play.darkType == top.darkType) return true;
-        }
+        if (play.darkColor == top.darkColor) return true;
 
-        return (play.darkColor == top.darkColor || play.darkValue == top.darkValue);
+        if (play.darkType == top.darkType && play.darkType != Type::NUMBER) return true;
+
+        if (play.darkType == Type::NUMBER && top.darkType == Type::NUMBER && play.darkValue == top.darkValue) return true;
+
+        return false;
     }
 }
 

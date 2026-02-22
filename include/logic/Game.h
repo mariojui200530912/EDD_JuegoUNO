@@ -42,6 +42,8 @@ private:
     void advanceTurn(bool& skipTurn);
     void performFlip();
     void applyCardEffect(Card card, bool& skipTurn);
+    void drawCards(Player* player, int amount);
+    void executeSniper();
 
 public:
     Game();

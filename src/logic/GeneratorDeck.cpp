@@ -79,7 +79,7 @@ void GeneratorDeck::initializeDeck(Stack& deckMain, int numPlayers, bool useFlip
             for (int i = 0; i < 4; i++) {
                 Color c = darkColors[i];
 
-                if(idxDark < totalCards) darkSideDeck[idxDark++] = {c, 1, Type::NUMBER};
+                if(idxDark < totalCards) darkSideDeck[idxDark++] = {c, 0, Type::NUMBER};
 
                 for(int v=1; v<=9; v++) {
                     if(idxDark < totalCards) darkSideDeck[idxDark++] = {c, v, Type::NUMBER};
@@ -89,7 +89,7 @@ void GeneratorDeck::initializeDeck(Stack& deckMain, int numPlayers, bool useFlip
                 for(int k=0; k<2; k++) {
                     if(idxDark < totalCards) darkSideDeck[idxDark++] = {c, 30, Type::JUMP_ALL};
                     if(idxDark < totalCards) darkSideDeck[idxDark++] = {c, 20, Type::REVERSE};
-                    if(idxDark < totalCards) darkSideDeck[idxDark++] = {c, 50, Type::DRAW_SIX};
+                    if(idxDark < totalCards) darkSideDeck[idxDark++] = {c, 50, Type::DRAW_TO};
 
                     if(idxDark < totalCards) {
                         darkSideDeck[idxDark++] = {c, 20, Type::FLIP};
@@ -97,7 +97,7 @@ void GeneratorDeck::initializeDeck(Stack& deckMain, int numPlayers, bool useFlip
                 }
             }
             for(int j=0; j<4; j++) {
-                if(idxDark < totalCards) darkSideDeck[idxDark++] = {Color::BLACK, 100, Type::WILD_CARD};
+                if(idxDark < totalCards) darkSideDeck[idxDark++] = {Color::BLACK, 100, Type::DRAW_SIX};
                 if(idxDark < totalCards) darkSideDeck[idxDark++] = {Color::BLACK, 100, Type::DRAW_UNTIL_COLOR};
             }
 

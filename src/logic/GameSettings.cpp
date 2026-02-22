@@ -19,7 +19,7 @@ void GameSettings::promptUser(DCircularList& turnList) {
     GameUI::clearScreen();
     GameUI::printHeader("CONFIGURACION DE LA PARTIDA");
 
-    // 1. CANTIDAD DE JUGADORES
+    // CANTIDAD DE JUGADORES
     do {
         std::cout << "Ingrese numero de jugadores (Minimo 2): ";
         std::cin >> numPlayers;
@@ -31,7 +31,7 @@ void GameSettings::promptUser(DCircularList& turnList) {
         } else break;
     } while (true);
 
-    // 2. INSERCION DE NOMBRES ---
+    // INSERCION DE NOMBRES ---
     GameUI::printHeader("REGISTRO DE JUGADORES");
     for (int i = 0; i < numPlayers; i++) {
         std::string name;
@@ -41,13 +41,12 @@ void GameSettings::promptUser(DCircularList& turnList) {
         turnList.add(new Player(name));
     }
 
-    // 3. MODO
+    // MODO DE JUEGO
     GameUI::printHeader("VARIANTE DE JUEGO");
     std::cout << "[1] UNO Clasico (Normal)\n[2] UNO Flip (Lado Oscuro)\nOpcion: ";
     int modeChoice; std::cin >> modeChoice;
     useFlip = (modeChoice == 2);
 
-    // 4. REGLAS DE LA CASA
     GameUI::printHeader("REGLAS DE LA CASA");
     char resp;
 

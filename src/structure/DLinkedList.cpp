@@ -97,18 +97,17 @@ void DLinkedList::showHand(bool isDarkStep)
 
     while (current != nullptr)
     {
-        // 1. Determinar atributos según el lado
+        // Determinar atributos según el lado
         Color c = isDarkStep ? current->card.darkColor : current->card.lightColor;
         int val = isDarkStep ? current->card.darkValue : current->card.lightValue;
         Type t  = isDarkStep ? current->card.darkType  : current->card.lightType;
 
-        // 2. Obtener color usando la utilidad compartida
+        // Obtener color usando la utilidad compartida
         std::string colorCode = getCardColorANSI(c);
 
-        // 3. Imprimir
+        // Imprimir
         std::cout << i << ". " << colorCode << "[";
 
-        // Lógica de visualización de texto (Simplificada)
         if (t == Type::NUMBER) {
             std::cout << val;
         } else {
@@ -116,9 +115,12 @@ void DLinkedList::showHand(bool isDarkStep)
             if (t == Type::JUMP || t == Type::JUMP_ALL) std::cout << "S"; // Skip
             else if (t == Type::REVERSE) std::cout << "R";
             else if (t == Type::DRAW_TO) std::cout << "+2";
-            else if (t == Type::DRAW_SIX) std::cout << "+5";
+            else if (t == Type::DRAW_FOUR) std::cout << "+4";
+            else if (t == Type::DRAW_SIX) std::cout << "+6";
             else if (t == Type::WILD_CARD) std::cout << "W";
-            else if (t == Type::CUSTOM || t == Type::DRAW_UNTIL_COLOR) std::cout << "+W";
+            else if (t == Type::DRAW_UNTIL_COLOR) std::cout << "+W";
+            else if (t == Type::SNIPER) std::cout << "SN";
+            else if (t == Type::ROULETTE) std::cout << "RO";
             else if (t == Type::FLIP) std::cout << "FLIP";
         }
 
@@ -141,7 +143,6 @@ bool DLinkedList::isEmpty()
     return size == 0;
 }
 
-// Función auxiliar global (o estática) para comparar
 bool compareCards(Card a, Card b, bool isDarkStep) {
     if (isDarkStep) {
         if (a.darkColor != b.darkColor) return a.darkColor < b.darkColor;
@@ -152,8 +153,7 @@ bool compareCards(Card a, Card b, bool isDarkStep) {
     }
 }
 
-// --- ESTRATEGIA 1: INSERTION SORT (Para Robar) ---
-// Intercambia DATOS, no punteros (más seguro para ajustes pequeños)
+//-----INSERTION SORT
 void DLinkedList::insertionSort(bool isDarkStep) {
     if (!head || !head->next) return;
 
@@ -163,7 +163,7 @@ void DLinkedList::insertionSort(bool isDarkStep) {
         Node* prevNode = current->prev;
         Node* nextIter = current->next; // Guardamos el siguiente para no perdernos
 
-        // Movemos hacia atrás intercambiando DATOS (más seguro que mover punteros)
+        // Movemos hacia atrás intercambiando DATOS
         while (prevNode != nullptr && compareCards(keyNode->card, prevNode->card, isDarkStep)) {
             // Swap Data
             Card temp = keyNode->card;
@@ -178,23 +178,18 @@ void DLinkedList::insertionSort(bool isDarkStep) {
     }
 }
 
-// --- ESTRATEGIA 2: MERGE SORT (Para FLIP) ---
+// --- MERGE SORT (Para FLIP) ---
 
-// Función pública que llama al proceso recursivo y arregla head/tail
 void DLinkedList::mergeSort(bool isDarkStep) {
     if (!head || !head->next) return;
 
     head = mergeSortRec(head, isDarkStep);
-
-    // Reconstruir el puntero TAIL (necesario porque los punteros cambiaron)
     Node* temp = head;
     while (temp->next != nullptr) {
         temp = temp->next;
     }
     tail = temp;
 }
-
-// 1. Dividir la lista en dos mitades
 DLinkedList::Node* DLinkedList::split(Node* source) {
     Node* fast = source;
     Node* slow = source;
@@ -209,7 +204,7 @@ DLinkedList::Node* DLinkedList::split(Node* source) {
     return temp;
 }
 
-// 2. Fusionar dos sub-listas ordenadas
+// Fusionar dos sub-listas ordenadas
 DLinkedList::Node* DLinkedList::merge(Node* first, Node* second, bool isDarkStep) {
     if (!first) return second;
     if (!second) return first;
@@ -231,7 +226,7 @@ DLinkedList::Node* DLinkedList::merge(Node* first, Node* second, bool isDarkStep
     return result;
 }
 
-// 3. Función recursiva principal
+// Función recursiva principal
 DLinkedList::Node* DLinkedList::mergeSortRec(Node* node, bool isDarkStep) {
     if (!node || !node->next) return node;
 
