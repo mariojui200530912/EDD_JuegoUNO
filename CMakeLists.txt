@@ -23,4 +23,8 @@ add_executable(JuegoUNO
         include/logic/Game.h
         src/logic/Game.cpp
         include/utils/ConsoleColors.h
+        include/view/GameUI.h
+        src/view/GameUI.cpp
+        include/logic/GameSettings.h
+        src/logic/GameSettings.cpp
 )

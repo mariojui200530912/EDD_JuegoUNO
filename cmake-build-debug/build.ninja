@@ -105,6 +105,20 @@ build CMakeFiles/JuegoUNO.dir/src/logic/Game.cpp.obj: CXX_COMPILER__JuegoUNO_uns
   OBJECT_DIR = CMakeFiles\JuegoUNO.dir
   OBJECT_FILE_DIR = CMakeFiles\JuegoUNO.dir\src\logic
 
+build CMakeFiles/JuegoUNO.dir/src/view/GameUI.cpp.obj: CXX_COMPILER__JuegoUNO_unscanned_Debug C$:/Users/Hp/CLionProjects/JuegoUNO/src/view/GameUI.cpp || cmake_object_order_depends_target_JuegoUNO
+  CONFIG = Debug
+  DEP_FILE = CMakeFiles\JuegoUNO.dir\src\view\GameUI.cpp.obj.d
+  FLAGS = -g -fdiagnostics-color=always
+  OBJECT_DIR = CMakeFiles\JuegoUNO.dir
+  OBJECT_FILE_DIR = CMakeFiles\JuegoUNO.dir\src\view
+
+build CMakeFiles/JuegoUNO.dir/src/logic/GameSettings.cpp.obj: CXX_COMPILER__JuegoUNO_unscanned_Debug C$:/Users/Hp/CLionProjects/JuegoUNO/src/logic/GameSettings.cpp || cmake_object_order_depends_target_JuegoUNO
+  CONFIG = Debug
+  DEP_FILE = CMakeFiles\JuegoUNO.dir\src\logic\GameSettings.cpp.obj.d
+  FLAGS = -g -fdiagnostics-color=always
+  OBJECT_DIR = CMakeFiles\JuegoUNO.dir
+  OBJECT_FILE_DIR = CMakeFiles\JuegoUNO.dir\src\logic
+
 
 # =============================================================================
 # Link build statements for EXECUTABLE target JuegoUNO
@@ -113,7 +127,7 @@ build CMakeFiles/JuegoUNO.dir/src/logic/Game.cpp.obj: CXX_COMPILER__JuegoUNO_uns
 #############################################
 # Link the executable JuegoUNO.exe
 
-build JuegoUNO.exe: CXX_EXECUTABLE_LINKER__JuegoUNO_Debug CMakeFiles/JuegoUNO.dir/main.cpp.obj CMakeFiles/JuegoUNO.dir/src/entity/Player.cpp.obj CMakeFiles/JuegoUNO.dir/src/structure/Stack.cpp.obj CMakeFiles/JuegoUNO.dir/src/structure/DLinkedList.cpp.obj CMakeFiles/JuegoUNO.dir/src/structure/DCircularList.cpp.obj CMakeFiles/JuegoUNO.dir/src/logic/GeneratorDeck.cpp.obj CMakeFiles/JuegoUNO.dir/src/logic/Rules.cpp.obj CMakeFiles/JuegoUNO.dir/src/logic/Game.cpp.obj
+build JuegoUNO.exe: CXX_EXECUTABLE_LINKER__JuegoUNO_Debug CMakeFiles/JuegoUNO.dir/main.cpp.obj CMakeFiles/JuegoUNO.dir/src/entity/Player.cpp.obj CMakeFiles/JuegoUNO.dir/src/structure/Stack.cpp.obj CMakeFiles/JuegoUNO.dir/src/structure/DLinkedList.cpp.obj CMakeFiles/JuegoUNO.dir/src/structure/DCircularList.cpp.obj CMakeFiles/JuegoUNO.dir/src/logic/GeneratorDeck.cpp.obj CMakeFiles/JuegoUNO.dir/src/logic/Rules.cpp.obj CMakeFiles/JuegoUNO.dir/src/logic/Game.cpp.obj CMakeFiles/JuegoUNO.dir/src/view/GameUI.cpp.obj CMakeFiles/JuegoUNO.dir/src/logic/GameSettings.cpp.obj
   CONFIG = Debug
   FLAGS = -g
   LINK_LIBRARIES = -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32

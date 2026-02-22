@@ -12,18 +12,16 @@ void GeneratorDeck::swap(Card& first, Card& second)
 
 void GeneratorDeck::initializeDeck(Stack& deckMain, int numPlayers, bool useFlip)
 {
-    // 1. Calcular tamaño total
+    // Calcular el numero de decks
     int numDecks = ((numPlayers - 1) / 6) + 1;
 
-    // Si NO es flip, son 108 cartas. Si ES flip, son 116.
-    int cardsInDeck = useFlip ? 116 : 108;
+    // Si NO es flip, son 108 cartas. Si ES flip, son 120.
+    int cardsInDeck = useFlip ? 120 : 108;
     int totalCards = numDecks * cardsInDeck;
 
-    // 2. Arrays temporales
-    // Siempre necesitamos el lado claro
+    // Array temporal
     Card* lightSideDeck = new Card[totalCards];
 
-    // Solo creamos el array oscuro si vamos a jugar FLIP
     Card* darkSideDeck = nullptr;
     if (useFlip) {
         darkSideDeck = new Card[totalCards];
@@ -60,13 +58,20 @@ void GeneratorDeck::initializeDeck(Stack& deckMain, int numPlayers, bool useFlip
         // Comodines Claros
         for(int j=0; j<4; j++) {
             if(idxLight < totalCards) lightSideDeck[idxLight++] = {Color::BLACK, 50, Type::WILD_CARD};
-            if(idxLight < totalCards) lightSideDeck[idxLight++] = {Color::BLACK, 50, Type::CUSTOM};
+            if(idxLight < totalCards) lightSideDeck[idxLight++] = {Color::BLACK, 50, Type::DRAW_FOUR};
+        }
+
+        // --- CARTAS INVENTADAS (SOLO MODO FLIP) ---
+        if (useFlip) {
+            for(int j=0; j<2; j++) {
+                // 2 Ruletas y 2 Francotiradores (Negras)
+                if(idxLight < totalCards) lightSideDeck[idxLight++] = {Color::BLACK, 60, Type::ROULETTE};
+                if(idxLight < totalCards) lightSideDeck[idxLight++] = {Color::BLACK, 60, Type::SNIPER};
+            }
         }
     }
 
-    // ==========================================
-    // B. GENERAR LADO OSCURO (SOLO SI ES FLIP)
-    // ==========================================
+    // GENERAR LADO OSCURO (SOLO SI ES FLIP)
     if (useFlip) {
         Color darkColors[] = {Color::PINK, Color::TURQUOISE, Color::ORANGE, Color::PURPLE};
 
@@ -86,7 +91,7 @@ void GeneratorDeck::initializeDeck(Stack& deckMain, int numPlayers, bool useFlip
                     if(idxDark < totalCards) darkSideDeck[idxDark++] = {c, 20, Type::REVERSE};
                     if(idxDark < totalCards) darkSideDeck[idxDark++] = {c, 50, Type::DRAW_SIX};
 
-                    if(idxDark < totalCards) { // Ya validamos useFlip arriba
+                    if(idxDark < totalCards) {
                         darkSideDeck[idxDark++] = {c, 20, Type::FLIP};
                     }
                 }
@@ -95,13 +100,18 @@ void GeneratorDeck::initializeDeck(Stack& deckMain, int numPlayers, bool useFlip
                 if(idxDark < totalCards) darkSideDeck[idxDark++] = {Color::BLACK, 100, Type::WILD_CARD};
                 if(idxDark < totalCards) darkSideDeck[idxDark++] = {Color::BLACK, 100, Type::DRAW_UNTIL_COLOR};
             }
+
+            // CARTAS INVENTADAS (SU REVERSO OSCURO) ---
+            for(int j=0; j<2; j++) {
+                if(idxDark < totalCards) darkSideDeck[idxDark++] = {Color::BLACK, 100, Type::ROULETTE};
+                if(idxDark < totalCards) darkSideDeck[idxDark++] = {Color::BLACK, 100, Type::SNIPER};
+            }
         }
     }
 
-    // 3. BARAJADO
+    // BARAJADO
     std::srand(std::time(0));
 
-    // Barajar Lado Claro (Siempre)
     if (idxLight > 0) {
         for (int i = idxLight - 1; i > 0; i--) {
             int j = std::rand() % (i + 1);
@@ -111,7 +121,6 @@ void GeneratorDeck::initializeDeck(Stack& deckMain, int numPlayers, bool useFlip
         }
     }
 
-    // OPTIMIZACIÓN: Barajar Lado Oscuro (SOLO SI ES FLIP)
     if (useFlip && idxDark > 0) {
         for (int i = idxDark - 1; i > 0; i--) {
             int j = std::rand() % (i + 1);
@@ -121,7 +130,7 @@ void GeneratorDeck::initializeDeck(Stack& deckMain, int numPlayers, bool useFlip
         }
     }
 
-    // 4. FUSIÓN Y LLENADO DE PILA
+    // Fusionar las cartas lado oscuro y lado claro
     for (int i = 0; i < totalCards; i++)
     {
         Card finalCard;
@@ -133,7 +142,6 @@ void GeneratorDeck::initializeDeck(Stack& deckMain, int numPlayers, bool useFlip
             finalCard.lightType = lightSideDeck[i].lightType;
         }
 
-        // LÓGICA CONDICIONAL PARA EL LADO OSCURO
         if (useFlip && i < idxDark) {
             // Si es Flip, copiamos del mazo oscuro generado
             finalCard.darkColor = darkSideDeck[i].lightColor; // Ojo: darkSideDeck usa struct Card temporalmente
@@ -149,11 +157,49 @@ void GeneratorDeck::initializeDeck(Stack& deckMain, int numPlayers, bool useFlip
         deckMain.push(finalCard);
     }
 
-    // 5. LIMPIEZA
     delete[] lightSideDeck;
-
-    // OPTIMIZACIÓN: Solo borramos si lo creamos
     if (useFlip) {
         delete[] darkSideDeck;
     }
+}
+
+void GeneratorDeck::refillMainDeck(Stack& mainDeck, Stack& discardPile, int maxDeckSize) {
+    if (discardPile.isEmpty()) {
+        std::cout << ANSI_RED << "[!] Error: No hay cartas en el descarte para recargar." << ANSI_RESET << std::endl;
+        return;
+    }
+
+    std::cout << ANSI_YELLOW << "\n[!] El mazo se ha agotado. Rebarajando el descarte..." << ANSI_RESET << std::endl;
+
+    // Guardamos la carta superior (la que está en juego)
+    Card topCard = discardPile.pop();
+
+    // Extraemos el resto de cartas a un array temporal para barajar
+    Card* tempCards = new Card[maxDeckSize];
+    int count = 0;
+
+    while (!discardPile.isEmpty()) {
+        if (count < maxDeckSize) {
+            tempCards[count++] = discardPile.pop();
+        } else {
+            discardPile.pop();
+        }
+    }
+
+    // Barajar (Fisher-Yates)
+    for (int i = count - 1; i > 0; i--) {
+        int j = std::rand() % (i + 1);
+        Card temp = tempCards[i];
+        tempCards[i] = tempCards[j];
+        tempCards[j] = temp;
+    }
+
+    for (int i = 0; i < count; i++) {
+        mainDeck.push(tempCards[i]);
+    }
+
+    discardPile.push(topCard);
+    delete[] tempCards;
+
+    std::cout << ANSI_GREEN << "[OK] Nuevo mazo listo con " << count << " cartas." << ANSI_RESET << std::endl;
 }

@@ -7,7 +7,7 @@
 #include <string>
 
 enum class Color { RED, GREEN, BLUE, YELLOW, PINK, TURQUOISE, ORANGE, PURPLE, BLACK  };
-enum class Type {NUMBER, JUMP, REVERSE, DRAW_TO, WILD_CARD, FLIP, JUMP_ALL, DRAW_SIX, DRAW_UNTIL_COLOR, CUSTOM};
+enum class Type {NUMBER, JUMP, REVERSE, DRAW_TO, DRAW_FOUR, WILD_CARD, FLIP, JUMP_ALL, DRAW_SIX, DRAW_UNTIL_COLOR, ROULETTE, SNIPER};
 
 struct Card
 {
@@ -18,10 +18,6 @@ struct Card
     Color darkColor;
     int darkValue;
     Type darkType;
-
-    Card* nextCard = nullptr;
-    Card* previousCard = nullptr;
-
 };
 
 #endif //JUEGOUNO_CARD_H

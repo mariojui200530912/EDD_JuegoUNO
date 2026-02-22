@@ -46,5 +46,17 @@
   "command": "C:\\PROGRA~1\\JETBRA~1\\CLION2~1.2\\bin\\mingw\\bin\\G__~1.EXE -g -fdiagnostics-color=always -o CMakeFiles\\JuegoUNO.dir\\src\\logic\\Game.cpp.obj -c C:\\Users\\Hp\\CLionProjects\\JuegoUNO\\src\\logic\\Game.cpp",
   "file": "C:/Users/Hp/CLionProjects/JuegoUNO/src/logic/Game.cpp",
   "output": "C:/Users/Hp/CLionProjects/JuegoUNO/cmake-build-debug/CMakeFiles/JuegoUNO.dir/src/logic/Game.cpp.obj"
+},
+{
+  "directory": "C:/Users/Hp/CLionProjects/JuegoUNO/cmake-build-debug",
+  "command": "C:\\PROGRA~1\\JETBRA~1\\CLION2~1.2\\bin\\mingw\\bin\\G__~1.EXE -g -fdiagnostics-color=always -o CMakeFiles\\JuegoUNO.dir\\src\\view\\GameUI.cpp.obj -c C:\\Users\\Hp\\CLionProjects\\JuegoUNO\\src\\view\\GameUI.cpp",
+  "file": "C:/Users/Hp/CLionProjects/JuegoUNO/src/view/GameUI.cpp",
+  "output": "C:/Users/Hp/CLionProjects/JuegoUNO/cmake-build-debug/CMakeFiles/JuegoUNO.dir/src/view/GameUI.cpp.obj"
+},
+{
+  "directory": "C:/Users/Hp/CLionProjects/JuegoUNO/cmake-build-debug",
+  "command": "C:\\PROGRA~1\\JETBRA~1\\CLION2~1.2\\bin\\mingw\\bin\\G__~1.EXE -g -fdiagnostics-color=always -o CMakeFiles\\JuegoUNO.dir\\src\\logic\\GameSettings.cpp.obj -c C:\\Users\\Hp\\CLionProjects\\JuegoUNO\\src\\logic\\GameSettings.cpp",
+  "file": "C:/Users/Hp/CLionProjects/JuegoUNO/src/logic/GameSettings.cpp",
+  "output": "C:/Users/Hp/CLionProjects/JuegoUNO/cmake-build-debug/CMakeFiles/JuegoUNO.dir/src/logic/GameSettings.cpp.obj"
 }
 ]
