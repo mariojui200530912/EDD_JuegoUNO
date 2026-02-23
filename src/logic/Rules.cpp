@@ -34,6 +34,26 @@ bool Rules::validateMove(Card play, Card top, bool isDarkStep, Color activeColor
     }
 }
 
+bool Rules::canStack(Card play, Card top, bool isDarkStep) {
+    if (!isDarkStep) {
+        return (play.lightType == Type::DRAW_TO && top.lightType == Type::DRAW_TO) ||
+               (play.lightType == Type::DRAW_FOUR && top.lightType == Type::DRAW_FOUR);
+    } else {
+        return (play.darkType == Type::DRAW_TO && top.darkType == Type::DRAW_TO) ||
+               (play.darkType == Type::DRAW_SIX && top.darkType == Type::DRAW_SIX);
+    }
+}
+
+bool Rules::isWildCard(Card card, bool isDarkStep) {
+    if (!isDarkStep) {
+        return (card.lightType == Type::WILD_CARD || card.lightType == Type::DRAW_FOUR ||
+                card.lightType == Type::ROULETTE || card.lightType == Type::SNIPER);
+    } else {
+        return (card.darkType == Type::DRAW_SIX || card.darkType == Type::DRAW_UNTIL_COLOR ||
+                card.darkType == Type::ROULETTE || card.darkType == Type::SNIPER);
+    }
+}
+
 bool Rules::checkBluff(Player* challenger, Player* bluffer, Color neededColor, int neededValue, bool isDarkStep) {
     std::cout << ANSI_RED << ANSI_BOLD << "\n!!! " << challenger->getName() << " DESAFIA EL +4 DE "
               << bluffer->getName() << " !!!" << ANSI_RESET << std::endl;

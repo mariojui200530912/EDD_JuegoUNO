@@ -60,12 +60,6 @@ void Game::loop() {
 
     while (!gameFinished) {
         Player* currentPlayer = turnList.getCurrentPlayer();
-
-        // Verificar castigos (+2, +4, etc.)
-        if (handlePendingPenalties(currentPlayer)) {
-            continue; // Si recibio castigo y no pudo acumular, pierde el turno
-        }
-
         // Mostrar la mesa y la mano
         renderUI(currentPlayer);
 
@@ -84,26 +78,9 @@ void Game::loop() {
     }
 }
 
-bool Game::handlePendingPenalties(Player* player) {
-    bool mustStackOrDraw = (cardsToDraw > 0);
-
-    // Si hay castigo y NO se permite acumular, robar inmediatamente y perder turno
-    if (mustStackOrDraw && !allowStacking) {
-        std::cout << ANSI_RED << "\n[!] CASTIGO: " << player->getName()
-                  << " roba " << cardsToDraw << " cartas." << ANSI_RESET << std::endl;
-        drawCards(player, cardsToDraw);
-        cardsToDraw = 0;
-
-        turnList.passTurn(clockwise);
-        return true;
-    }
-    return false;
-}
-
-
 void Game::applyCardEffect(Card card, bool& skipTurn) {
-    bool isWildLight = (!isDarkStep && (card.lightType == Type::WILD_CARD || card.lightType == Type::DRAW_FOUR || card.lightType == Type::ROULETTE || card.lightType == Type::SNIPER));
-    bool isWildDark = (isDarkStep && (card.darkType == Type::WILD_CARD || card.darkType == Type::DRAW_UNTIL_COLOR || card.darkType == Type::ROULETTE || card.darkType == Type::SNIPER));
+    bool isWildLight = (!isDarkStep && Rules::isWildCard(card, false));
+    bool isWildDark = (isDarkStep && Rules::isWildCard(card, true));
 
     if (isWildLight || isWildDark) {
         activeColor = GameUI::askForColor(isDarkStep);
@@ -120,10 +97,7 @@ void Game::applyCardEffect(Card card, bool& skipTurn) {
                 break;
             case Type::JUMP: skipTurn = true; break;
             case Type::FLIP: performFlip(); break;
-            case Type::ROULETTE:
-                cardsToDraw += ((std::rand() % 6) + 1);
-                std::cout << ANSI_BOLD << ANSI_RED << "\n¡RULETA! El siguiente roba al azar.\n" << ANSI_RESET;
-                break;
+            case Type::ROULETTE: executeRoulette(false); break;
             case Type::SNIPER:
             executeSniper();
             break;
@@ -140,45 +114,9 @@ void Game::applyCardEffect(Card card, bool& skipTurn) {
                 break;
             case Type::JUMP_ALL: turnList.passTurn(!clockwise); break;
             case Type::FLIP: performFlip(); break;
-            case Type::ROULETTE:
-                cardsToDraw += ((std::rand() % 6) + 1);
-                std::cout << ANSI_BOLD << ANSI_RED << "\n¡RULETA OSCURA! Castigo al azar.\n" << ANSI_RESET;
-                break;
-            case Type::SNIPER:
-                executeSniper();
-                break;
-            case Type::DRAW_UNTIL_COLOR: {
-                std::cout << ANSI_RED << ANSI_BOLD << "\n¡MALDICION MULTICOLOR! El siguiente roba hasta encontrar el color.\n" << ANSI_RESET;
-
-                turnList.passTurn(clockwise);
-                Player* victim = turnList.getCurrentPlayer();
-                std::cout << "Victima: " << victim->getName() << "...\n";
-
-                bool found = false;
-                int count = 0;
-
-                // Robando del maso
-                while (!found) {
-                    if (mainDeck.isEmpty()) GeneratorDeck::refillMainDeck(mainDeck, discardPile, maxDeckSize);
-                    if (mainDeck.isEmpty()) break;
-
-                    Card drawn = mainDeck.pop();
-                    victim->addCard(drawn);
-                    count++;
-
-                    if (drawn.darkColor == activeColor) {
-                        found = true;
-                        std::cout << ANSI_GREEN << "¡Color encontrado tras robar " << count << " cartas!\n" << ANSI_RESET;
-                    }
-                }
-
-                victim->getHand().insertionSort(isDarkStep);
-
-                // Regresar el turno al jugador actual y saltar a la víctima
-                turnList.passTurn(!clockwise);
-                skipTurn = true;
-                break;
-            }
+            case Type::ROULETTE: executeRoulette(true); break;
+            case Type::SNIPER: executeSniper(); break;
+            case Type::DRAW_UNTIL_COLOR: executeDrawUntilColor(skipTurn); break;
             default: break;
         }
     }
@@ -189,41 +127,16 @@ void Game::renderUI(Player* player) {
     GameUI::printTable(discardPile.peek(), activeColor, isDarkStep, player, cardsToDraw, allowStacking, mainDeck.getSize());
 }
 
-void Game::executeDraw(Player* player) {
-    if (cardsToDraw > 0) { // Robar por castigo acumulado
-        std::cout << "Aceptas el castigo. Robando " << cardsToDraw << " cartas.\n";
-        for (int i = 0; i < cardsToDraw; i++) {
-            if (mainDeck.isEmpty()) GeneratorDeck::refillMainDeck(mainDeck, discardPile, maxDeckSize);
-            if (!mainDeck.isEmpty()) player->addCard(mainDeck.pop());
-        }
-        cardsToDraw = 0;
-    }
-    else { // Robo voluntario
-        if (drawUntilPlayable) { // Modo infinito
-            std::cout << "Robando hasta encontrar carta jugable...\n";
-            while (true) {
-                if (mainDeck.isEmpty()) GeneratorDeck::refillMainDeck(mainDeck, discardPile, maxDeckSize);
-                if (mainDeck.isEmpty()) break;
-
-                Card drawn = mainDeck.pop();
-                player->addCard(drawn);
-                if (Rules::validateMove(drawn, discardPile.peek(), isDarkStep, activeColor)) {
-                    std::cout << "¡Carta jugable encontrada!\n";
-                    break;
-                }
-            }
-        } else { // Modo 1 carta
-            if (mainDeck.isEmpty()) GeneratorDeck::refillMainDeck(mainDeck, discardPile, maxDeckSize);
-            if (!mainDeck.isEmpty()) {
-                player->addCard(mainDeck.pop());
-                std::cout << "Has robado una carta.\n";
-            }
-        }
-    }
-    player->getHand().insertionSort(isDarkStep);
-}
-
 void Game::handlePlayerTurn(Player* player, bool& skipTurn) {
+    if (cardsToDraw > 0 && !allowStacking) {
+        std::cout << ANSI_RED << "\n[!] CASTIGO OBLIGATORIO: Regla de acumular desactivada.\n" << ANSI_RESET;
+        std::cout << ANSI_RED << "\n[!] CASTIGO APLICADO: " << player->getName()
+              << " recibe " << cardsToDraw << " cartas.\n" << ANSI_RESET;
+        drawCards(player, cardsToDraw);
+        cardsToDraw = 0;
+        return;
+    }
+
     bool turnEnded = false;
     bool hasDrawn = false;
 
@@ -237,7 +150,11 @@ void Game::handlePlayerTurn(Player* player, bool& skipTurn) {
         if (choice == 0) {
             // Si hay un castigo pendiente, roba y pierde el turno de inmediato
             if (cardsToDraw > 0) {
-                (player);
+                std::cout << ANSI_RED << "\n[!] Aceptas el castigo. Robando " << cardsToDraw << " cartas...\n" << ANSI_RESET;
+
+                drawCards(player, cardsToDraw);
+                cardsToDraw = 0;
+
                 turnEnded = true;
             }
             // Si es robo voluntario
@@ -252,9 +169,13 @@ void Game::handlePlayerTurn(Player* player, bool& skipTurn) {
                         turnEnded = true;
                     }
                 } else {
-                    executeDraw(player);
+                    if (drawUntilPlayable) {
+                        infiniteDraw(player);
+                    } else {
+                        drawCards(player, 1);
+                        std::cout << ANSI_CYAN << "Has robado una carta.\n" << ANSI_RESET;
+                    }
                     hasDrawn = true;
-                    // Imprimimos su mano actualizada para que vea qué carta le tocó
                     std::cout << ANSI_CYAN << "\n--- MANO ACTUALIZADA ---" << ANSI_RESET << std::endl;
                     player->getHand().showHand(isDarkStep);
 
@@ -273,21 +194,14 @@ void Game::handlePlayerTurn(Player* player, bool& skipTurn) {
             // VALIDACIÓN DEL MOVIMIENTO
             bool isValid = false;
             if (cardsToDraw > 0) {
-                if (!isDarkStep && selected.lightType == Type::DRAW_TO && topCard.lightType == Type::DRAW_TO) isValid = true;
-                else if (!isDarkStep && selected.lightType == Type::DRAW_FOUR && topCard.lightType == Type::DRAW_FOUR) isValid = true;
-                else if (isDarkStep && selected.darkType == Type::DRAW_TO && topCard.lightType == Type::DRAW_TO) isValid = true;
-                else if (isDarkStep && selected.darkType == Type::DRAW_SIX && topCard.darkType == Type::DRAW_SIX) isValid = true;
-                else std::cout << ANSI_RED << "¡Debes jugar una carta de suma o robar!" << ANSI_RESET << std::endl;
+                isValid = Rules::canStack(selected, topCard, isDarkStep); // Lógica delegada al motor
+                if (!isValid) std::cout << ANSI_RED << "¡Debes jugar una carta de suma o robar!" << ANSI_RESET << std::endl;
             } else {
                 isValid = Rules::validateMove(selected, topCard, isDarkStep, activeColor);
             }
 
             if (isValid) {
-                // REGLA: GANAR CON CARTA NEGRA
-                bool isWild = (!isDarkStep && (selected.lightType == Type::WILD_CARD || selected.lightType == Type::DRAW_FOUR || selected.lightType == Type::ROULETTE || selected.lightType == Type::SNIPER)) ||
-                              (isDarkStep && (selected.darkType == Type::WILD_CARD || selected.darkType == Type::DRAW_UNTIL_COLOR || selected.darkType == Type::ROULETTE || selected.darkType == Type::SNIPER));
-
-                if (!allowWinWithWild && player->getHand().getSize() == 1 && isWild) {
+                if (!allowWinWithWild && player->getHand().getSize() == 1 && Rules::isWildCard(selected, isDarkStep)) {
                     std::cout << ANSI_RED << "¡REGLA VIOLADA! No puedes ganar con carta Negra.\nRobas 1 de castigo.\n" << ANSI_RESET;
                     drawCards(player, 1);
                     turnEnded = true;
@@ -308,25 +222,7 @@ void Game::handlePlayerTurn(Player* player, bool& skipTurn) {
                 else activeColor = (playedCard.lightColor != Color::BLACK) ? playedCard.lightColor : activeColor;
 
                 // LÓGICA DEL RETO DEL +4
-                bool challengeSuccess = false;
-
-                if (allowChallengePlus4 && !isDarkStep && playedCard.lightType == Type::DRAW_FOUR) {
-
-                    turnList.passTurn(clockwise);
-                    Player* victim = turnList.getCurrentPlayer();
-                    turnList.passTurn(!clockwise);
-
-                    if (GameUI::askToChallenge(victim->getName())) {
-                        challengeSuccess = Rules::checkBluff(victim, player, previousColor, previousValue, isDarkStep);
-
-                        if (challengeSuccess) {
-                            drawCards(player, 4);
-                            playedCard.lightType = Type::WILD_CARD;
-                        } else {
-                            cardsToDraw += 2;
-                        }
-                    }
-                }
+                handlePlus4Challenge(player, playedCard, previousColor, previousValue);
 
                 // APLICAR EFECTOS Y TERMINAR TURNO
                 applyCardEffect(playedCard, skipTurn);
@@ -393,6 +289,85 @@ void Game::drawCards(Player* player, int amount) {
     }
     // Ordenamos la mano una sola vez al terminar de robar
     player->getHand().insertionSort(isDarkStep);
+}
+
+void Game::infiniteDraw(Player* player)
+{
+    std::cout << ANSI_YELLOW << "Robando hasta encontrar carta jugable...\n" << ANSI_RESET;
+    while (true) {
+        if (mainDeck.isEmpty()) GeneratorDeck::refillMainDeck(mainDeck, discardPile, maxDeckSize);
+        if (mainDeck.isEmpty()) break; // Seguro contra bucles infinitos si el mazo se rompe
+
+        Card drawn = mainDeck.pop();
+        player->addCard(drawn);
+
+        if (Rules::validateMove(drawn, discardPile.peek(), isDarkStep, activeColor)) {
+            std::cout << ANSI_GREEN << "¡Carta jugable encontrada!\n" << ANSI_RESET;
+            break;
+        }
+    }
+    player->getHand().insertionSort(isDarkStep);
+}
+
+void Game::handlePlus4Challenge(Player* player, Card& playedCard, Color previousColor, int previousValue) {
+    if (!allowChallengePlus4 || isDarkStep || playedCard.lightType != Type::DRAW_FOUR) {
+        return;
+    }
+
+    turnList.passTurn(clockwise);
+    Player* victim = turnList.getCurrentPlayer();
+    turnList.passTurn(!clockwise);
+
+    if (GameUI::askToChallenge(victim->getName())) {
+        bool challengeSuccess = Rules::checkBluff(victim, player, previousColor, previousValue, isDarkStep);
+
+        if (challengeSuccess) {
+            drawCards(player, 4); // jugador se lleva las 4 cartas
+            playedCard.lightType = Type::WILD_CARD;
+        } else {
+            cardsToDraw += 2; // victima se equivoco se lleva 6 cartas
+        }
+    }
+}
+
+void Game::executeRoulette(bool isDark) {
+    int castigo = (std::rand() % 6) + 1;
+    cardsToDraw += castigo;
+
+    if (!isDark) {
+        std::cout << ANSI_BOLD << ANSI_RED << "\n¡RULETA! El siguiente roba " << castigo << " cartas.\n" << ANSI_RESET;
+    } else {
+        std::cout << ANSI_BOLD << ANSI_RED << "\n¡RULETA OSCURA! Castigo de " << castigo << " cartas.\n" << ANSI_RESET;
+    }
+}
+
+void Game::executeDrawUntilColor(bool& skipTurn) {
+    std::cout << ANSI_RED << ANSI_BOLD << "\n¡MALDICION MULTICOLOR! El siguiente roba hasta encontrar el color.\n" << ANSI_RESET;
+
+    turnList.passTurn(clockwise);
+    Player* victim = turnList.getCurrentPlayer();
+    std::cout << "Victima: " << victim->getName() << "...\n";
+
+    int count = 0;
+    while (true) {
+        if (mainDeck.isEmpty()) GeneratorDeck::refillMainDeck(mainDeck, discardPile, maxDeckSize);
+        if (mainDeck.isEmpty()) break;
+
+        Card drawn = mainDeck.pop();
+        victim->addCard(drawn);
+        count++;
+
+        if (drawn.darkColor == activeColor) {
+            std::cout << ANSI_GREEN << "¡Color encontrado tras robar " << count << " cartas!\n" << ANSI_RESET;
+            break;
+        }
+    }
+
+    victim->getHand().insertionSort(isDarkStep);
+
+    // Regresar el turno al jugador actual y saltar a la víctima
+    turnList.passTurn(!clockwise);
+    skipTurn = true;
 }
 
 void Game::executeSniper() {

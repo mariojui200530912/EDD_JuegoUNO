@@ -27,7 +27,7 @@
 			{
 				"command" : 0,
 				"file" : 0,
-				"line" : 8,
+				"line" : 9,
 				"parent" : 0
 			}
 		]
@@ -72,6 +72,10 @@
 		[
 			{
 				"fragment" : "-g",
+				"role" : "flags"
+			},
+			{
+				"fragment" : "-static-libgcc -static-libstdc++ -static",
 				"role" : "flags"
 			},
 			{

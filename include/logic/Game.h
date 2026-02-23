@@ -34,15 +34,17 @@ private:
     Color activeColor;
 
     // --- METODOS PRIVADOS ---
-    bool handlePendingPenalties(Player* player);
     void renderUI(Player* player);
     void handlePlayerTurn(Player* player, bool& skipTurn);
-    void executeDraw(Player* player);
     void checkUnoAndWin(Player* player);
     void advanceTurn(bool& skipTurn);
     void performFlip();
     void applyCardEffect(Card card, bool& skipTurn);
     void drawCards(Player* player, int amount);
+    void infiniteDraw(Player* player);
+    void handlePlus4Challenge(Player* player, Card& playedCard, Color previousColor, int previousValue);
+    void executeRoulette(bool isDark);
+    void executeDrawUntilColor(bool& skipTurn);
     void executeSniper();
 
 public:

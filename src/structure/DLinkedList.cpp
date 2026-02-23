@@ -85,8 +85,7 @@ Card DLinkedList::getByIndex(int index)
     return current->card;
 }
 
-void DLinkedList::showHand(bool isDarkStep)
-{
+void DLinkedList::showHand(bool isDarkStep) {
     Node* current = head;
     int i = 1;
 
@@ -95,33 +94,43 @@ void DLinkedList::showHand(bool isDarkStep)
         return;
     }
 
-    while (current != nullptr)
-    {
-        // Determinar atributos según el lado
+    while (current != nullptr) {
         Color c = isDarkStep ? current->card.darkColor : current->card.lightColor;
         int val = isDarkStep ? current->card.darkValue : current->card.lightValue;
         Type t  = isDarkStep ? current->card.darkType  : current->card.lightType;
 
-        // Obtener color usando la utilidad compartida
         std::string colorCode = getCardColorANSI(c);
 
-        // Imprimir
-        std::cout << i << ". " << colorCode << "[";
+        std::cout << colorCode << i << ". [";
 
         if (t == Type::NUMBER) {
             std::cout << val;
         } else {
-            // Puedes hacer otra función auxiliar para esto si quieres limpiar más
-            if (t == Type::JUMP || t == Type::JUMP_ALL) std::cout << "S"; // Skip
-            else if (t == Type::REVERSE) std::cout << "R";
-            else if (t == Type::DRAW_TO) std::cout << "+2";
-            else if (t == Type::DRAW_FOUR) std::cout << "+4";
-            else if (t == Type::DRAW_SIX) std::cout << "+6";
-            else if (t == Type::WILD_CARD) std::cout << "W";
-            else if (t == Type::DRAW_UNTIL_COLOR) std::cout << "+W";
-            else if (t == Type::SNIPER) std::cout << "SN";
-            else if (t == Type::ROULETTE) std::cout << "RO";
-            else if (t == Type::FLIP) std::cout << "FLIP";
+            // LADO CLARO
+            if (!isDarkStep) {
+                if (t == Type::JUMP) std::cout << "SALTO";
+                else if (t == Type::REVERSE) std::cout << "REVERSA";
+                else if (t == Type::DRAW_TO) std::cout << "+2";
+                else if (t == Type::DRAW_FOUR) std::cout << "+4";
+                else if (t == Type::WILD_CARD) std::cout << "COLOR";
+                else if (t == Type::FLIP) std::cout << "FLIP";
+                else if (t == Type::ROULETTE) std::cout << "RULETA";
+                else if (t == Type::SNIPER) std::cout << "SNIPER";
+                else std::cout << "ESPECIAL";
+            }
+            // LADO OSCURO
+            else {
+                if (t == Type::JUMP_ALL) std::cout << "S-TODO";
+                else if (t == Type::REVERSE) std::cout << "REVERSA";
+                else if (t == Type::DRAW_TO) std::cout << "+3";
+                else if (t == Type::DRAW_SIX) std::cout << "+6";
+                else if (t == Type::DRAW_UNTIL_COLOR) std::cout << "+COLOR";
+                else if (t == Type::WILD_CARD) std::cout << "COLOR";
+                else if (t == Type::FLIP) std::cout << "FLIP";
+                else if (t == Type::ROULETTE) std::cout << "RULETA";
+                else if (t == Type::SNIPER) std::cout << "SNIPER";
+                else std::cout << "ESPECIAL";
+            }
         }
 
         std::cout << "]" << ANSI_RESET << "  ";
